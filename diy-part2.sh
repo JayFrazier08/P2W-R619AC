@@ -11,9 +11,11 @@
 #
 
 set -e
-# 替换目标设备配置中的 ath10k-ct 为官方标准驱动，解决新内核 mac80211 冲突
-sed -i 's/kmod-ath10k-ct/kmod-ath10k/g' target/linux/ipq40xx/Makefile
-sed -i 's/ath10k-firmware-qca4019-ct/ath10k-firmware-qca4019/g' target/linux/ipq40xx/Makefile
+# ================= 替换 ath10k-ct 为官方标准驱动 =================
+echo "=== 开始递归替换 ipq40xx 架构下的 ct 驱动为标准驱动 ==="
+find target/linux/ipq40xx/ -type f \( -name "Makefile" -o -name "*.mk" \) -exec sed -i 's/kmod-ath10k-ct/kmod-ath10k/g' {} +
+find target/linux/ipq40xx/ -type f \( -name "Makefile" -o -name "*.mk" \) -exec sed -i 's/ath10k-firmware-qca4019-ct/ath10k-firmware-qca4019/g' {} +
+echo "=== 替换完成 ==="
 
 # 为生成的固件镜像名称添加时间戳。
 sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk

@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 #
 # Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
 #
@@ -11,7 +11,6 @@
 #
 
 set -e
-
 # 替换目标设备配置中的 ath10k-ct 为官方标准驱动，解决新内核 mac80211 冲突
 sed -i 's/kmod-ath10k-ct/kmod-ath10k/g' target/linux/ipq40xx/Makefile
 sed -i 's/ath10k-firmware-qca4019-ct/ath10k-firmware-qca4019/g' target/linux/ipq40xx/Makefile
@@ -31,7 +30,11 @@ sed -i 's/[Bb]ootstrap/argon/g' ./feeds/luci/collections/luci/Makefile
 # 设置默认路由器 IP 地址。
 sed -i 's/192.168.1.1/192.168.88.1/g' package/base-files/files/bin/config_generate
 
-
+# 使用官方 OpenClash，避免第三方 feed 里的版本与当前 LuCI 不兼容。
+find . -name Makefile -path '*openclash*' -delete
+rm -rf package/openclash
+git clone --depth=1 --filter=blob:none --sparse https://github.com/vernesong/OpenClash.git package/openclash
+git -C package/openclash sparse-checkout set luci-app-openclash
 
 # 使用官方 PassWall，按上游 README 的方法 2 接入。
 rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
@@ -55,6 +58,7 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-timecontrol package/tim
 
 # 提前校验关键插件目录，便于上游目录结构变化时尽早失败。
 for dir in \
+  package/openclash/luci-app-openclash \
   package/passwall-packages \
   package/passwall-luci/luci-app-passwall \
   package/netwizard/luci-app-netwizard \

@@ -179,6 +179,12 @@ jobs:
           cd openwrt
           make defconfig
 
+          # ======= 新增：运维现场验证环节 =======
+          echo "================================================="
+          echo "=== 正在验证最终生效的无线驱动配置 ==="
+          grep -E "CONFIG_PACKAGE_kmod-ath10k|CONFIG_PACKAGE_ath10k-firmware" .config || true
+          echo "================================================="
+
           for pkg in \
             CONFIG_PACKAGE_luci-app-openclash=y \
             CONFIG_PACKAGE_luci-app-passwall=y \

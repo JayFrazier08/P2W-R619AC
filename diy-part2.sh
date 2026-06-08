@@ -59,7 +59,6 @@ git clone --depth=1 https://github.com/sirpdboy/luci-app-timecontrol package/tim
 
 # 提前校验关键插件目录，便于上游目录结构变化时尽早失败。
 for dir in \
-  package/openclash/luci-app-openclash \
   package/passwall-packages \
   package/passwall-luci/luci-app-passwall \
   package/netwizard/luci-app-netwizard \
